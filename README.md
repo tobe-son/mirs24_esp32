@@ -7,6 +7,7 @@ micro-rosを用いて他コンピュータと通信を行います。
 *mainへの直接pushは禁じています。開発用ブランチを立てて、pull requestを出してください*\
 *カスタマイズするなら個人または団体のアカウントでforkしてください*
 
+## 使用方法
 このリポジトリと使用するライブラリのダウンロード
 ```bash
 git clone https://github.com/mirs240x/mirs24_esp32.git
@@ -14,7 +15,7 @@ git clone https://github.com/mirs240x/micro_ros_arduino_mirs240x.git
 ```
 
 ## 詳細
-内部ファイルの詳細
+### 内部ファイルの詳細
 
 | ファイル | 機能概要 | 補足とか詳細とか |
 | :---: | --- | --- |
@@ -27,13 +28,20 @@ git clone https://github.com/mirs240x/micro_ros_arduino_mirs240x.git
 | `vel_pub` | 速度計算 ||
 | `vlt_observer` | 電圧監視 |
 
-topic詳細
+### topic詳細
 
-|  | topic | 概要 | 型 |
-| --- | --- | --- | --- |
-| publish | `/encoder` | エンコーダーのカウント値 | std_msgs/msg/Int32MultiArray |
-| ^ | `/vlt` | バッテリー電圧 | std_msg/msg/Float64MultiArray |
-| ^ | `/vel` | 左右の移動速度 | std_msgs/msg/Float64MultiArray |
-| subscribe | `/cmd_vel` | 速度指令値 | geometry_msgs/msg/Twist |
-| ^ | `/params` | パラメーター | mirs_msgs/msg/BasicParam | 
+#### publish
+
+| topic | 概要 | 型 |
+| --- | --- | --- |
+| `/encoder` | エンコーダーのカウント値 | std_msgs/msg/Int32MultiArray |
+| `/vlt` | バッテリー電圧 | std_msg/msg/Float64MultiArray |
+| `/vel` | 左右の移動速度 | std_msgs/msg/Float64MultiArray |
+
+#### subscribe
+
+| topic | 概要 | 型 |
+| --- | --- | --- |
+| `/cmd_vel` | 速度指令値 | geometry_msgs/msg/Twist |
+| `/params` | パラメーター | mirs_msgs/msg/BasicParam | 
 
