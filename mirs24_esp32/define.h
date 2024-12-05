@@ -9,7 +9,8 @@
 #define PIN_DIR_L   32
 #define PIN_PWM_L   33
 
-#define PIN_BATT    27
+#define PIN_BATT_1  27
+#define PIN_BATT_2  28
 
 //足回り速度制御用
 double RKP = 80.0;
