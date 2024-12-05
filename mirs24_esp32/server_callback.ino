@@ -1,4 +1,4 @@
-//  updateサーバーのコールバック
+// 　updateサーバーのコールバック
 void update_service_callback(const void * req, void * res){
   mirs_msgs__srv__ParameterUpdate_Request * req_in = (mirs_msgs__srv__ParameterUpdate_Request *) req;
   mirs_msgs__srv__ParameterUpdate_Response * res_in = (mirs_msgs__srv__ParameterUpdate_Response *) res;

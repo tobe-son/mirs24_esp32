@@ -10,12 +10,12 @@
 #include <mirs_msgs/srv/simple_command.h>
 #include <mirs_msgs/msg/basic_param.h>
 #include <std_msgs/msg/float64_multi_array.h>
-#include "define.h"
+#include "config.h"
 
 std_msgs__msg__Int32MultiArray enc_msg;               //エンコーダー情報
 std_msgs__msg__Float64MultiArray vlt_msg;             //電圧情報
-std_msgs__msg__Float64MultiArray cuvel_msg;           //速度情報
-geometry_msgs__msg__Twist vel_msg;                    //速度指令値
+std_msgs__msg__Float64MultiArray curr_vel_msg;           //速度情報
+geometry_msgs__msg__Twist cmd_vel_msg;                    //速度指令値
 mirs_msgs__msg__BasicParam param_msg;                 //パラメーターメッセージ
 mirs_msgs__srv__ParameterUpdate_Response update_res;  
 mirs_msgs__srv__ParameterUpdate_Request update_req;
@@ -24,7 +24,7 @@ mirs_msgs__srv__SimpleCommand_Request reset_req;
 
 rcl_publisher_t enc_pub;
 rcl_publisher_t vlt_pub;
-rcl_publisher_t cuvel_pub;
+rcl_publisher_t curr_vel_pub;
 rcl_subscription_t cmd_vel_sub;
 rcl_subscription_t param_sub;
 rcl_service_t update_srv;
@@ -36,134 +36,39 @@ rcl_allocator_t allocator;
 rcl_node_t node;
 rcl_timer_t timer;
 
+//エンコーダーカウント
 int32_t count_l = 0;
 int32_t count_r = 0;
-int32_t last_count_l = 0;
-int32_t last_count_r = 0;
-// 速度計算用
-double left_distance = 0;
-double right_distance = 0;
 
-// PID制御用の変数
+int32_t prev_count_l = 0;
+int32_t prev_count_r = 0;
+
+//PID制御用の変数
 double r_vel_cmd;
 double l_vel_cmd;
 double r_vel;
 double l_vel;
-double r_pwm;
-double l_pwm;
+
+float linear_x;   //  直進速度
+float angular_z;  //  回転速度
+
+float r_err_sum = 0;
+float l_err_sum = 0;
+
+float prev_r_err = 0;
+float prev_l_err = 0;
 
 double vlt_1 = 0;
 double vlt_2 = 0;
 
-void timer_callback(rcl_timer_t * timer, int64_t last_call_time)
-{  
-  RCLC_UNUSED(last_call_time);
-  if (timer != NULL) {
-    //速度計算
-    calculate_cuvel();
-    //PID計算
-    PID_control();
-    //エンコーダーデータを格納
-    enc_msg.data.data[0] = count_l;
-    enc_msg.data.data[1] = count_r;
-    //電圧観測
-    //vlt_watch();
-    vlt_msg.data.data[0] = l_vel;
-    vlt_msg.data.data[1] = r_vel;
-    rcl_publish(&enc_pub, &enc_msg, NULL);
-    rcl_publish(&vlt_pub, &vlt_msg, NULL);
-    rcl_publish(&cuvel_pub, &cuvel_msg, NULL);
-  }
-}
-
 void setup() {
-  set_microros_transports();
-
-  //Serial.begin(115200); // シリアル通信を初期化
+  ros_setup();
 
   encoder_open();
-
-  delay(2000);
-
-  //micro-ROSのセットアップ
-  allocator = rcl_get_default_allocator();
-
-  //  nodeの作成とros_domein_idの作成
-  rosid_setup_humble();
-  //rosid_setup_foxy();
-
-  //サブスクライバ、パブリッシャー、サービスの宣言
-  rclc_publisher_init_default(
-    &enc_pub,
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32MultiArray),
-    "/encoder"
-  );
-
-  rclc_publisher_init_default(
-    &vlt_pub,
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float64MultiArray),
-    "/vlt"
-  );
-
-  rclc_publisher_init_default(
-    &cuvel_pub,
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float64MultiArray),
-    "/vel"
-  );
-
-  rclc_subscription_init_default(
-    &cmd_vel_sub,
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(geometry_msgs, msg, Twist),
-    "/cmd_vel"
-  );
-  
-  rclc_subscription_init_default(
-    &param_sub,
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(mirs_msgs, msg, BasicParam),
-    "/params"
-  );
-  
-  rclc_service_init_default(
-    &update_srv,
-    &node,
-    ROSIDL_GET_SRV_TYPE_SUPPORT(mirs_msgs, srv, ParameterUpdate),
-    "/esp_update"
-  );
-
-  rclc_service_init_default(
-    &reset_srv,
-    &node,
-    ROSIDL_GET_SRV_TYPE_SUPPORT(mirs_msgs, srv, SimpleCommand),
-    "/reset_encoder"
-  );
-
-  const uint32_t timer_timeout = 100;
-
-  rclc_timer_init_default(
-    &timer,
-    &support,
-    RCL_MS_TO_NS(timer_timeout),
-    timer_callback
-  );
-
-  rclc_executor_init(&executor, &support.context, 5, &allocator);
-  rclc_executor_add_subscription(&executor, &cmd_vel_sub, &vel_msg, &cmd_vel_Callback, ON_NEW_DATA);
-  rclc_executor_add_subscription(&executor, &param_sub, &param_msg, &param_Callback, ON_NEW_DATA);
-  rclc_executor_add_service(&executor, &update_srv, &update_req, &update_res, update_service_callback);
-  rclc_executor_add_service(&executor, &reset_srv, &reset_req, &reset_res, reset_service_callback);
-  rclc_executor_add_timer(&executor, &timer);
-
-  cmd_vel_set();
+  vel_ctrl_set();
   vlt_setup();
-  //cuvel_setup();
 
-  delay(2000);
-
+  delay(500);
 }
 
 void loop() {
