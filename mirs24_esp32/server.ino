@@ -26,7 +26,7 @@ void reboot_service_callback(const void * req, void * res){
   res_in->success = true;
   ESP.restart();
 }
-
+*/
 //  resetサーバーのコールバック
 void reset_service_callback(const void * req, void * res){
   mirs_msgs__srv__SimpleCommand_Request * req_in = (mirs_msgs__srv__SimpleCommand_Request *) req;
@@ -36,4 +36,3 @@ void reset_service_callback(const void * req, void * res){
 
   res_in->success = true;
 }
-*/

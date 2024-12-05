@@ -4,8 +4,6 @@
 #include <rcl/error_handling.h>
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
-//#include <TimeLib.h>
-#include <PID_v1_bc.h>
 #include <std_msgs/msg/int32_multi_array.h>
 #include <geometry_msgs/msg/transform_stamped.h>
 #include <rosidl_runtime_c/string_functions.h>
@@ -27,6 +25,8 @@ geometry_msgs__msg__Twist vel_msg;            //速度指令値
 mirs_msgs__msg__BasicParam param_msg;         //パラメーターメッセージ
 mirs_msgs__srv__ParameterUpdate_Response update_res;
 mirs_msgs__srv__ParameterUpdate_Request update_req;
+mirs_msgs__srv__SimpleCommand_Response reset_res;
+mirs_msgs__srv__SimpleCommand_Request reset_req;
 
 rcl_publisher_t enc_pub;
 rcl_publisher_t vlt_pub;
@@ -34,6 +34,7 @@ rcl_publisher_t cuvel_pub;
 rcl_subscription_t cmd_vel_sub;
 rcl_subscription_t param_sub;
 rcl_service_t update_srv;
+rcl_service_t reset_srv;
 
 rclc_executor_t executor;
 rclc_support_t support;
@@ -145,6 +146,13 @@ void setup() {
     "/esp_update"
   );
 
+  rclc_service_init_default(
+    &reset_srv,
+    &node,
+    ROSIDL_GET_SRV_TYPE_SUPPORT(mirs_msgs, srv, SimpleCommand),
+    "/reset_encoder"
+  );
+
   const uint32_t timer_timeout = 100;
 
   rclc_timer_init_default(
@@ -154,10 +162,11 @@ void setup() {
     timer_callback
   );
 
-  rclc_executor_init(&executor, &support.context, 4, &allocator);
+  rclc_executor_init(&executor, &support.context, 5, &allocator);
   rclc_executor_add_subscription(&executor, &cmd_vel_sub, &vel_msg, &cmd_vel_Callback, ON_NEW_DATA);
   rclc_executor_add_subscription(&executor, &param_sub, &param_msg, &param_Callback, ON_NEW_DATA);
   rclc_executor_add_service(&executor, &update_srv, &update_req, &update_res, update_service_callback);
+  rclc_executor_add_service(&executor, &reset_srv, &reset_req, &reset_res, reset_service_callback);
   rclc_executor_add_timer(&executor, &timer);
 
   cmd_vel_set();
