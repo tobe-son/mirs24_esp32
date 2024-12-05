@@ -1,5 +1,3 @@
-/* 2024/22/06 現在２つ目のサーバー設立が不可の模様  */
-
 //  updateサーバーのコールバック
 void update_service_callback(const void * req, void * res){
   mirs_msgs__srv__ParameterUpdate_Request * req_in = (mirs_msgs__srv__ParameterUpdate_Request *) req;
@@ -26,7 +24,7 @@ void reboot_service_callback(const void * req, void * res){
   res_in->success = true;
   ESP.restart();
 }
-
+*/
 //  resetサーバーのコールバック
 void reset_service_callback(const void * req, void * res){
   mirs_msgs__srv__SimpleCommand_Request * req_in = (mirs_msgs__srv__SimpleCommand_Request *) req;
@@ -36,4 +34,3 @@ void reset_service_callback(const void * req, void * res){
 
   res_in->success = true;
 }
-*/
