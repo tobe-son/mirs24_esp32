@@ -82,7 +82,7 @@ void vel_ctrl_set() {
   ledcAttachPin(PIN_PWM_R, r_Channel);
   ledcAttachPin(PIN_PWM_L, l_Channel);
 
-  curr_vel_msg.data.size = 2; // メッセージ配列のサイズを3に設定
+  curr_vel_msg.data.size = 2; // メッセージ配列のサイズを2に設定
   curr_vel_msg.data.data = (double *)malloc(enc_msg.data.size * sizeof(double)); // 配列のメモリを確保
   curr_vel_msg.data.data[0] = 0;
   curr_vel_msg.data.data[1] = 0;

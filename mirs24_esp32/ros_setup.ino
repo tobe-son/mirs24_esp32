@@ -69,6 +69,7 @@ void ros_setup(){
   );
 
   //イベント発生の設定（数字はイベントの発生点の数）
+  //デフォルトの発生点はsubscriberが2(/cmd_vel,/params)、serviceが2(/reset,/update)、timerが1（定期実行）の合計5
   rclc_executor_init(&executor, &support.context, 5, &allocator);
   rclc_executor_add_subscription(&executor, &cmd_vel_sub, &cmd_vel_msg, &cmd_vel_Callback, ON_NEW_DATA);
   rclc_executor_add_subscription(&executor, &param_sub, &param_msg, &param_Callback, ON_NEW_DATA);
@@ -78,8 +79,11 @@ void ros_setup(){
 }
 
 /*    ROS_DOMAIN_ID 設定用                  */
-/*    foxyの場合はrosid_setup_foxy()        */
-/*    humbleの場合はrosid_setup_humble()    */
+/*    foxy以前の場合はrosid_setup_foxy()        */
+/*    humble以降の場合はrosid_setup_humble()    */
+/*    多分コンパイラの関係。このプログラムの作成者のコンパイル環境はhumbleなので基本的にはrosid_setup_humbleの仕様を推奨 */
+/*    ライブラリを再コンパイルする際は環境に合わせて設定するように　*/
+
 void rosid_setup_foxy(){
   rcl_node_options_t node_ops;
   node_ops = rcl_node_get_default_options();

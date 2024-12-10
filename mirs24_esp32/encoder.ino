@@ -1,3 +1,4 @@
+
 void encoder_reset() {
   count_l = 0;
   count_r = 0;
