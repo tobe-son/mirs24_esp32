@@ -3,15 +3,13 @@ void timer_callback(rcl_timer_t * timer, int64_t last_call_time)
 {  
   RCLC_UNUSED(last_call_time);
   if (timer != NULL) {
-    //速度計算
-    //calculate_vel();
     //PID計算
     PID_control();
     //エンコーダーデータを格納
     enc_msg.data.data[0] = count_l;
     enc_msg.data.data[1] = count_r;
     //電圧観測
-    //vlt_watch();
+    vlt_watch();
 
     curr_vel_msg.data.data[0] = l_vel;
     curr_vel_msg.data.data[1] = r_vel;

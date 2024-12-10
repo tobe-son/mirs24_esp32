@@ -58,15 +58,6 @@ void ros_setup(){
     ROSIDL_GET_SRV_TYPE_SUPPORT(mirs_msgs, srv, SimpleCommand),
     "/reset_encoder"
   );
-  /*
-  rclc_action_server_init_default(
-    &test_action,
-    &node,
-    &support,
-    ROSIDL_GET_ACTION_TYPE_SUPPORT(mirs_msgs, Trigger),
-    "/test_action"
-  );
-  */
 
   const uint32_t timer_timeout = 100;
 
@@ -78,18 +69,21 @@ void ros_setup(){
   );
 
   //イベント発生の設定（数字はイベントの発生点の数）
+  //デフォルトの発生点はsubscriberが2(/cmd_vel,/params)、serviceが2(/reset,/update)、timerが1（定期実行）の合計5
   rclc_executor_init(&executor, &support.context, 5, &allocator);
   rclc_executor_add_subscription(&executor, &cmd_vel_sub, &cmd_vel_msg, &cmd_vel_Callback, ON_NEW_DATA);
   rclc_executor_add_subscription(&executor, &param_sub, &param_msg, &param_Callback, ON_NEW_DATA);
   rclc_executor_add_service(&executor, &update_srv, &update_req, &update_res, update_service_callback);
   rclc_executor_add_service(&executor, &reset_srv, &reset_req, &reset_res, reset_service_callback);
-  //rclc_executor_add_action_server(&executor, &test_action, 10, test_goal_request, sizeof(mirs_msgs__action__Trigger_SendGoal_Request), handle_goal, handle_cancel , (void *) &test_action);
   rclc_executor_add_timer(&executor, &timer);
 }
 
 /*    ROS_DOMAIN_ID 設定用                  */
-/*    foxyの場合はrosid_setup_foxy()        */
-/*    humbleの場合はrosid_setup_humble()    */
+/*    foxy以前の場合はrosid_setup_foxy()        */
+/*    humble以降の場合はrosid_setup_humble()    */
+/*    多分コンパイラの関係。このプログラムの作成者のコンパイル環境はhumbleなので基本的にはrosid_setup_humbleの仕様を推奨 */
+/*    ライブラリを再コンパイルする際は環境に合わせて設定するように　*/
+
 void rosid_setup_foxy(){
   rcl_node_options_t node_ops;
   node_ops = rcl_node_get_default_options();
