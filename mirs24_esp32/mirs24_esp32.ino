@@ -10,17 +10,28 @@
 #include <mirs_msgs/srv/simple_command.h>
 #include <mirs_msgs/msg/basic_param.h>
 #include <std_msgs/msg/float64_multi_array.h>
+#include <mirs_msgs/action/trigger.h>
+#include <pthread.h>
 #include "config.h"
 
+//topic通信
 std_msgs__msg__Int32MultiArray enc_msg;               //エンコーダー情報
 std_msgs__msg__Float64MultiArray vlt_msg;             //電圧情報
 std_msgs__msg__Float64MultiArray curr_vel_msg;           //速度情報
 geometry_msgs__msg__Twist cmd_vel_msg;                    //速度指令値
 mirs_msgs__msg__BasicParam param_msg;                 //パラメーターメッセージ
+
+//service通信
 mirs_msgs__srv__ParameterUpdate_Response update_res;  
 mirs_msgs__srv__ParameterUpdate_Request update_req;
 mirs_msgs__srv__SimpleCommand_Response reset_res;
 mirs_msgs__srv__SimpleCommand_Request reset_req;
+
+//action通信
+//mirs_msgs__action__Trigger_Goal test_goal;
+//mirs_msgs__action__Trigger_SendGoal_Request test_goal_request[10];
+//mirs_msgs__action__Trigger_Result test_result;
+
 
 rcl_publisher_t enc_pub;
 rcl_publisher_t vlt_pub;
@@ -29,6 +40,7 @@ rcl_subscription_t cmd_vel_sub;
 rcl_subscription_t param_sub;
 rcl_service_t update_srv;
 rcl_service_t reset_srv;
+//rclc_action_server_t test_action;
 
 rclc_executor_t executor;
 rclc_support_t support;
@@ -67,7 +79,7 @@ void setup() {
   encoder_open();
   vel_ctrl_set();
   vlt_setup();
-
+  
   delay(500);
 }
 

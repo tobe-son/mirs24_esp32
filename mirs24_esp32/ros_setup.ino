@@ -58,6 +58,15 @@ void ros_setup(){
     ROSIDL_GET_SRV_TYPE_SUPPORT(mirs_msgs, srv, SimpleCommand),
     "/reset_encoder"
   );
+  /*
+  rclc_action_server_init_default(
+    &test_action,
+    &node,
+    &support,
+    ROSIDL_GET_ACTION_TYPE_SUPPORT(mirs_msgs, Trigger),
+    "/test_action"
+  );
+  */
 
   const uint32_t timer_timeout = 100;
 
@@ -74,6 +83,7 @@ void ros_setup(){
   rclc_executor_add_subscription(&executor, &param_sub, &param_msg, &param_Callback, ON_NEW_DATA);
   rclc_executor_add_service(&executor, &update_srv, &update_req, &update_res, update_service_callback);
   rclc_executor_add_service(&executor, &reset_srv, &reset_req, &reset_res, reset_service_callback);
+  //rclc_executor_add_action_server(&executor, &test_action, 10, test_goal_request, sizeof(mirs_msgs__action__Trigger_SendGoal_Request), handle_goal, handle_cancel , (void *) &test_action);
   rclc_executor_add_timer(&executor, &timer);
 }
 
