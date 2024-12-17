@@ -59,6 +59,13 @@ void ros_setup(){
     "/reset_encoder"
   );
 
+  rclc_service_init_default(
+    &ctrl_srv,
+    &node,
+    ROSIDL_GET_SRV_TYPE_SUPPORT(mirs_msgs, srv, BasicCommand),
+    "/ctrl_updown"
+  );
+
   const uint32_t timer_timeout = 100;
 
   rclc_timer_init_default(
@@ -75,6 +82,7 @@ void ros_setup(){
   rclc_executor_add_subscription(&executor, &param_sub, &param_msg, &param_Callback, ON_NEW_DATA);
   rclc_executor_add_service(&executor, &update_srv, &update_req, &update_res, update_service_callback);
   rclc_executor_add_service(&executor, &reset_srv, &reset_req, &reset_res, reset_service_callback);
+  rclc_executor_add_service(&executor, &ctrl_srv, &ctrl_req, &ctrl_res, ctrl_service_callback);
   rclc_executor_add_timer(&executor, &timer);
 }
 

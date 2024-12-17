@@ -10,12 +10,23 @@
 #define PIN_DIR_L   32
 #define PIN_PWM_L   33
 
+//ステッピングモーターAB
+#define STEPPER_A_1 15
+#define STEPPER_A_2 2
+#define STEPPER_A_3 0
+#define STEPPER_A_4 4
+
+#define STEPPER_B_1 16
+#define STEPPER_B_2 17
+#define STEPPER_B_3 5
+#define STEPPER_B_4 18
+
 //バッテリー用
 #define PIN_BATT_1  27
 #define PIN_BATT_2  28
 
 //絶対に設定しろ!!!!!!!
-#define ROS_DOMAIN_ID 90
+#define ROS_DOMAIN_ID 17
 
 //足回り速度制御用
 double RKP = 80.0;

@@ -8,11 +8,16 @@
 #include <geometry_msgs/msg/twist.h>
 #include <mirs_msgs/srv/parameter_update.h>
 #include <mirs_msgs/srv/simple_command.h>
+#include <mirs_msgs/srv/basic_command.h>
 #include <mirs_msgs/msg/basic_param.h>
 #include <std_msgs/msg/float64_multi_array.h>
-#include <mirs_msgs/action/trigger.h>
+//#include <mirs_msgs/action/trigger.h>
 #include <pthread.h>
 #include "config.h"
+#include <Stepper.h>
+
+Stepper stepper_a(400, STEPPER_A_1,STEPPER_A_2,STEPPER_A_3,STEPPER_A_4);
+Stepper stepper_b(400, STEPPER_B_1,STEPPER_B_2,STEPPER_B_3,STEPPER_B_4);
 
 //topic通信で使用するメッセージ宣言
 std_msgs__msg__Int32MultiArray enc_msg;         //エンコーダー情報
@@ -26,6 +31,8 @@ mirs_msgs__srv__ParameterUpdate_Response update_res;
 mirs_msgs__srv__ParameterUpdate_Request update_req;
 mirs_msgs__srv__SimpleCommand_Response reset_res;
 mirs_msgs__srv__SimpleCommand_Request reset_req;
+mirs_msgs__srv__BasicCommand_Response ctrl_res;
+mirs_msgs__srv__BasicCommand_Request ctrl_req;
 
 //publisher,subscriber,serviceの宣言
 rcl_publisher_t enc_pub;
@@ -35,6 +42,7 @@ rcl_subscription_t cmd_vel_sub;
 rcl_subscription_t param_sub;
 rcl_service_t update_srv;
 rcl_service_t reset_srv;
+rcl_service_t ctrl_srv;
 
 //ノードに関わる宣言
 rclc_executor_t executor;
