@@ -12,7 +12,7 @@
 #include <mirs_msgs/msg/basic_param.h>
 #include <std_msgs/msg/float64_multi_array.h>
 //#include <mirs_msgs/action/trigger.h>
-#include <pthread.h>
+//#include <pthread.h>
 #include "config.h"
 #include <Stepper.h>
 

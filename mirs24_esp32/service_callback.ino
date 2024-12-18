@@ -49,8 +49,8 @@ void ctrl_service_callback(const void * req, void * res){
   double param3 = req_in->param3;
   double param4 = req_in->param4;
 
-  stepper_a.step(400);
-  stepper_b.step(400);  
+  stepper_a.setSpeed(40);
+  stepper_b.setSpeed(40);  
 
   // コールバック内で受け取った値を使用して処理を行う
   /*printf("Received parameters:\n");*/
@@ -58,4 +58,3 @@ void ctrl_service_callback(const void * req, void * res){
   // 処理が成功したと仮定してレスポンスをセット
   res_in->success = true;
 }
-
