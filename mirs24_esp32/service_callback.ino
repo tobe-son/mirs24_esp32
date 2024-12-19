@@ -49,8 +49,20 @@ void ctrl_service_callback(const void * req, void * res){
   double param3 = req_in->param3;
   double param4 = req_in->param4;
 
-  stepper_a.setSpeed(40);
-  stepper_b.setSpeed(40);  
+  /*stepper_a.setSpeed(40);
+  stepper_b.setSpeed(40);  */
+  if(param1 >0){
+    digitalWrite(15, LOW);//up makes 15 high
+    delay(5);
+    digitalWrite(15, HIGH);
+  }else{
+    digitalWrite(2, LOW);//down makes 2 high
+    delay(5);
+    digitalWrite(2, HIGH);
+  }
+
+  //test
+  digitalWrite(14, !digitalRead(14));
 
   // コールバック内で受け取った値を使用して処理を行う
   /*printf("Received parameters:\n");*/

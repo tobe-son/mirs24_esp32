@@ -16,8 +16,8 @@
 #include "config.h"
 #include <Stepper.h>
 
-Stepper stepper_a(400, STEPPER_A_1,STEPPER_A_2,STEPPER_A_3,STEPPER_A_4);
-Stepper stepper_b(400, STEPPER_B_1,STEPPER_B_2,STEPPER_B_3,STEPPER_B_4);
+//Stepper stepper_a(400, STEPPER_A_1,STEPPER_A_2,STEPPER_A_3,STEPPER_A_4);
+//Stepper stepper_b(400, STEPPER_B_1,STEPPER_B_2,STEPPER_B_3,STEPPER_B_4);
 
 //topic通信で使用するメッセージ宣言
 std_msgs__msg__Int32MultiArray enc_msg;         //エンコーダー情報
@@ -85,6 +85,13 @@ void setup() {
   encoder_open();
   vel_ctrl_set();
   vlt_setup();
+
+  pinMode(15,OUTPUT);
+  pinMode(2,OUTPUT);
+  pinMode(14,OUTPUT);
+
+  digitalWrite(15, HIGH);
+  digitalWrite(2, HIGH);
   
   delay(500);
 }
